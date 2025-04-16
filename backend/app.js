@@ -5,6 +5,7 @@ const morgan = require('morgan');
 const cors = require('cors');
 
 const setRouter = require('./routes/setRoutes');
+const noteRouter = require('./routes/noteRoutes');
 
 // SWAGGER API Documentation
 // const swaggerFile = fs.readFileSync("./api/index.yaml", "utf-8");
@@ -25,5 +26,6 @@ if (process.env.NODE_ENV === 'development') {
 
 // Routes
 app.use('/api/v1/sets', setRouter);
+app.use('/api/v1/notes', noteRouter);
 
 module.exports = app;

@@ -1,12 +1,12 @@
-const mongoose = require("mongoose");
-const dotenv = require("dotenv");
-const app = require("./app");
-const emoji = require("./utils/emoji");
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
+const app = require('./app');
+const emoji = require('./utils/emoji');
 
-dotenv.config({ path: "backend/config.env" });
+dotenv.config({ path: 'backend/config.env' });
 
 const database = process.env.DATABASE.replace(
-  "<PASSWORD>",
+  '<PASSWORD>',
   process.env.DATABASE_PASSWORD
 );
 

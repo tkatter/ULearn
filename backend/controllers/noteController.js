@@ -1,14 +1,16 @@
-const Set = require('../models/setModel');
+const Note = require('../models/noteModel');
 
-exports.getAllSets = async (req, res, next) => {
+exports.getAllNotes = async (req, res, next) => {
   try {
-    const sets = await Set.find();
+    const notes = await Note.find().populate({
+      path: 'set',
+      select: 'name',
+    });
 
     res.status(200).json({
       status: 'success',
-      results: sets.length,
       data: {
-        sets,
+        notes,
       },
     });
   } catch (err) {
@@ -19,15 +21,18 @@ exports.getAllSets = async (req, res, next) => {
   }
 };
 
-exports.getSet = async (req, res, next) => {
+exports.getNote = async (req, res, next) => {
   try {
-    const id = req.params.setId;
-    const set = await Set.find({ _id: id }).populate('notes');
+    const id = req.params.noteId;
+    const note = await Note.find({ _id: id }).populate({
+      path: 'set',
+      select: 'name',
+    });
 
     res.status(200).json({
       status: 'success',
       data: {
-        set,
+        note,
       },
     });
   } catch (err) {
@@ -38,13 +43,13 @@ exports.getSet = async (req, res, next) => {
   }
 };
 
-exports.createSet = async (req, res, next) => {
+exports.createNote = async (req, res, next) => {
   try {
-    const newSet = await Set.create(req.body);
+    const newNote = await Note.create(req.body);
     res.status(201).json({
       status: 'success',
       data: {
-        set: newSet,
+        note: newNote,
       },
     });
   } catch (err) {
