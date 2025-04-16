@@ -1,14 +1,15 @@
 const express = require('express');
 const morgan = require('morgan');
-// const swaggerUi = require("swagger-ui-express");
-// const YAML = require("yaml");
 const cors = require('cors');
+// const swaggerUi = require('swagger-ui-express');
+// const YAML = require('yaml');
+// const fs = require('fs');
 
 const setRouter = require('./routes/setRoutes');
 const noteRouter = require('./routes/noteRoutes');
 
 // SWAGGER API Documentation
-// const swaggerFile = fs.readFileSync("./api/index.yaml", "utf-8");
+// const swaggerFile = fs.readFileSync('backend/api/index.yaml', 'utf-8');
 // const swaggerDocument = YAML.parse(swaggerFile);
 
 const app = express();
@@ -25,6 +26,8 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // Routes
+// app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 app.use('/api/v1/sets', setRouter);
 app.use('/api/v1/notes', noteRouter);
 
