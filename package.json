@@ -1,0 +1,33 @@
+{
+  "name": "ulearn",
+  "version": "1.0.0",
+  "description": "An app where you can create Note Sets or use other people's Note Sets to study.",
+  "homepage": "https://github.com/tkatter/ULearn#readme",
+  "bugs": {
+    "url": "https://github.com/tkatter/ULearn/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tkatter/ULearn.git"
+  },
+  "license": "MIT",
+  "author": "Thomas Katter",
+  "type": "commonjs",
+  "main": "backend/server.js",
+  "scripts": {
+    "dev": "nodemon backend/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "mongoose": "^8.13.2",
+    "morgan": "^1.10.0",
+    "swagger-ui-express": "^5.0.1",
+    "yaml": "^2.7.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
