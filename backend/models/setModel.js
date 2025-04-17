@@ -47,7 +47,7 @@ setSchema.pre('save', function (next) {
 });
 
 // DOCUMENT MIDDLEWARE: runs after .save() and .create()
-setSchema.post('save', function (doc, next) {
+setSchema.post('save', function (next) {
   console.log('Document saved!');
   next();
 });

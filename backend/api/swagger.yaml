@@ -29,6 +29,8 @@ servers:
 tags:
   - name: sets
     description: Everything about requesting data for Note Sets.
+  - name: users
+    description: Everything about requesting data for Users
 paths:
   /sets:
     get:
@@ -137,6 +139,44 @@ paths:
           items:
             type: string
         style: simple
+  /users:
+    get:
+      tags:
+        - users
+      summary: Gets all the users
+      operationId: getAllUsers
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ResponseBody'
+                  - type: object
+                    properties:
+                      results:
+                        type: number
+                        minimum: 1
+                      data:
+                        properties:
+                          users:
+                            $ref: '#/components/schemas/UsersProperty'
+              example:
+                status: success
+                results: 2
+                data:
+                  users:
+                    - _id: bchus989scbuojk0
+                      name: user1
+                      userName: user.123
+                      email: user1@email.com
+                      role: user
+                    - _id: h7u8cdbcu9039jc0
+                      name: user2
+                      userName: userTwo
+                      email: user2@email.com
+                      role: user
 components:
   schemas:
     ResponseBody:
@@ -178,3 +218,21 @@ components:
             type: string
           _v:
             type: number
+    UsersProperty:
+      type: array
+      items:
+        type: object
+        properties:
+          _id:
+            type: string
+          name:
+            type: string
+          userName:
+            type: string
+          email:
+            type: string
+          role:
+            type: string
+            enum:
+              - admin
+              - user
