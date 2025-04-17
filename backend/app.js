@@ -27,22 +27,10 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // Routes
-// const options = {
-//   customCss: `.swagger-ui .topbar {
-//     display: none;
-//   }
-//   .swagger-ui {
-//     background-color: #333;
-//   }`,
-// };
-
-// const options = {
-//   customCssUrl: '/customSwagger.css',
-// };
-
 app.use(
   '/api/docs',
   swaggerUi.serve,
+  // swaggerUi.setup(swaggerDocument)
   swaggerUi.setup(swaggerDocument, options)
 );
 
