@@ -6,7 +6,11 @@ const options = require('./utils/customSwaggerCss');
 const YAML = require('yaml');
 const fs = require('fs');
 
+const globalErrorHandler = require('./controllers/errorController');
+const AppError = require('./utils/appError');
+
 const oauthRouter = require('./routes/oauthRoutes');
+const authRouter = require('./routes/authRoutes');
 const setRouter = require('./routes/setRoutes');
 const noteRouter = require('./routes/noteRoutes');
 const userRouter = require('./routes/userRoutes');
@@ -37,8 +41,16 @@ app.use(
 );
 
 app.use('/api/v1/oauth', oauthRouter);
+app.use('/api/v1/auth', authRouter);
+
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/sets', setRouter);
 app.use('/api/v1/notes', noteRouter);
+
+app.all('/{*splat}', (req, res, next) => {
+  next(new AppError(`Can't find ${req.originalUrl}`, 404));
+});
+
+app.use(globalErrorHandler);
 
 module.exports = app;
