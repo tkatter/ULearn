@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 
+// TODO: Create field for numNotes and calculate the number of notes each set has
+
 // Schema
 const setSchema = new mongoose.Schema(
   {
@@ -25,6 +27,11 @@ const setSchema = new mongoose.Schema(
       type: String,
       trim: true,
       // select: false,
+    },
+    secretSet: {
+      type: Boolean,
+      default: false,
+      select: false,
     },
   },
   {
@@ -54,10 +61,12 @@ setSchema.post('save', function (next) {
 
 // QUERY MIDDLEWARE
 setSchema.pre(/^find/, function (next) {
-  this.find({ secretTour: { $ne: true } });
+  this.find({ secretSet: { $ne: true } });
   // this.start = Date.now();
   next();
 });
+
+// aggregation
 
 const Set = mongoose.model('Set', setSchema);
 
