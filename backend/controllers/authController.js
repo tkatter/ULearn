@@ -4,22 +4,6 @@ const dotenv = require('dotenv');
 const { OAuth2Client } = require('google-auth-library');
 dotenv.config({ path: 'backend/config.env' });
 
-// async function getUserData(accessToken) {
-//   // TODO use authorization bearer token header in fetch
-//   const response = await fetch(
-//     `https://www.googleapis.com/oauth2/v3/userinfo`,
-//     {
-//       headers: {
-//         Authorization: `Bearer ${accessToken}`,
-//       },
-//     }
-//   );
-//   // console.log(response);
-//   const data = await response.json();
-//   console.log('data', data);
-//   return data;
-// }
-
 exports.oathRequest = async (req, res, next) => {
   try {
     const redirectUrl = 'http://127.0.0.1:3000/api/v1/oauth';

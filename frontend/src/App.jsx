@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import googleButton from './assets/btn_google_signin_light_normal_web@2x.png';
 // import './App.css';
 
@@ -11,7 +10,7 @@ function App() {
 
   async function auth() {
     try {
-      const res = await fetch(`http://127.0.0.1:3000/api/v1/oauth/request`, {
+      const res = await fetch(`/api/v1/oauth/request`, {
         method: 'POST',
       });
 

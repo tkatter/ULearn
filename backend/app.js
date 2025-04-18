@@ -6,7 +6,7 @@ const options = require('./utils/customSwaggerCss');
 const YAML = require('yaml');
 const fs = require('fs');
 
-const authRouter = require('./routes/authRoutes');
+const oauthRouter = require('./routes/oauthRoutes');
 const setRouter = require('./routes/setRoutes');
 const noteRouter = require('./routes/noteRoutes');
 const userRouter = require('./routes/userRoutes');
@@ -36,7 +36,7 @@ app.use(
   swaggerUi.setup(swaggerDocument, options)
 );
 
-app.use('/api/v1/oauth', authRouter);
+app.use('/api/v1/oauth', oauthRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/sets', setRouter);
 app.use('/api/v1/notes', noteRouter);
