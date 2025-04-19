@@ -1,43 +1,34 @@
 // const mongoose = require('mongoose');
 const User = require('../models/userModel');
+const AppError = require('../utils/appError');
+const catchAsync = require('../utils/catchAsync');
 
-exports.getAllUsers = async (req, res, next) => {
-  try {
-    const users = await User.find();
+exports.getAllUsers = catchAsync(async (req, res, next) => {
+  const users = await User.find();
 
-    res.status(200).json({
-      status: 'success',
-      results: users.length,
-      data: {
-        users,
-      },
-    });
-  } catch (err) {
-    res.status(400).json({
-      status: 'fail',
-      message: err,
-    });
-  }
-};
+  res.status(200).json({
+    status: 'success',
+    results: users.length,
+    data: {
+      users,
+    },
+  });
+});
 
-exports.getUser = async (req, res, next) => {
-  try {
-    const id = req.params.usrId;
-    const user = await User.findById(id);
+exports.getUser = catchAsync(async (req, res, next) => {
+  const id = req.params.usrId;
+  const user = await User.findById(id);
 
-    res.status(200).json({
-      status: 'success',
-      data: {
-        user,
-      },
-    });
-  } catch (err) {
-    res.status(400).json({
-      status: 'fail',
-      message: err,
-    });
-  }
-};
+  // Return error if no user is found
+  if (!user) return next(new AppError('No user found with that Id', 400));
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      user,
+    },
+  });
+});
 
 exports.createUser = async (req, res, next) => {
   try {

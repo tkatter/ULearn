@@ -1,8 +1,19 @@
-// const mongoose = require('mongoose');
-const User = require('../models/userModel');
-const dotenv = require('dotenv');
 const { OAuth2Client } = require('google-auth-library');
+const jwt = require('jsonwebtoken');
+const dotenv = require('dotenv');
+
+const User = require('../models/userModel');
+const catchAsync = require('../utils/catchAsync');
+const AppError = require('../utils/appError');
+const sendResponse = require('../utils/sendResponse');
+
 dotenv.config({ path: 'backend/config.env' });
+
+const signToken = id => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES_IN,
+  });
+};
 
 exports.oathRequest = async (req, res, next) => {
   try {
@@ -88,3 +99,41 @@ exports.oathResponse = async (req, res, next) => {
     }
   }
 };
+
+exports.signup = catchAsync(async (req, res, next) => {
+  // Create user in DB from sanitized req.body
+  const { name, email, password, passwordConfirm } = req.body;
+  const newUser = await User.create({
+    name,
+    email,
+    password,
+    passwordConfirm,
+  });
+
+  // Create JWT
+  const token = signToken(newUser._id);
+
+  // Remove password from response
+  newUser.password = undefined;
+  sendResponse(res, 201, { token, user: newUser });
+});
+
+exports.login = catchAsync(async (req, res, next) => {
+  // Get user email and password from req.body
+  const { email, password } = req.body;
+
+  // Check is email and password exist
+  if (!email || !password)
+    return next(new AppError('Please provide an email and password', 400));
+
+  // Check if user exists && password is correct
+  const user = await User.findOne({ email }).select('+password');
+  console.log(user);
+  if (!user || !(await user.correctPassword(password, user.password)))
+    return next(new AppError('Incorrect email or password', 401));
+
+  // If everything is valid, send jwt to client
+  const token = signToken(user._id);
+
+  sendResponse(res, 200, { token });
+});
