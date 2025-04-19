@@ -43,10 +43,14 @@ const userSchema = new mongoose.Schema({
     default: 'user',
     select: false,
   },
+  active: {
+    type: Boolean,
+    default: true,
+    select: false,
+  },
 });
 
 // DOCUMENT MIDDLEWARE: runs before or after .save() and .create()
-
 // Encrypt password when saved to DB
 userSchema.pre('save', async function (next) {
   // If the password has not been modified, then return immediately and call next()
@@ -64,6 +68,13 @@ userSchema.pre('save', function (next) {
 
   // Set the passwordChangedAt to 1s in the past to ensure the jwt is created after the timestamp
   this.passwordChangedAt = Date.now() - 1000;
+  next();
+});
+
+// QUERY MIDDLEWARE
+// Hides inactive users from the query
+userSchema.pre(/^find/, function (next) {
+  this.find({ active: { $ne: false } });
   next();
 });
 

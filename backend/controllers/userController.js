@@ -82,3 +82,10 @@ exports.updateMe = catchAsync(async (req, res, next) => {
 
   sendResponse(res, 200, { user: updatedUser });
 });
+
+exports.deleteMe = catchAsync(async (req, res, next) => {
+  // Find user by Id and set active property to false
+  await User.findByIdAndUpdate(req.user.id, { active: false });
+
+  sendResponse(res, 204, null);
+});

@@ -11,5 +11,6 @@ router
 router.route('/:usrId').get(userController.getUser);
 
 router.patch('/updateMe', userController.updateMe);
+router.delete('/deleteMe', userController.deleteMe);
 
 module.exports = router;
