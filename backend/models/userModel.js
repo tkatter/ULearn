@@ -3,52 +3,60 @@ const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, 'User must have a name'],
-  },
-  email: {
-    type: String,
-    required: [true, 'Please provide an email'],
-    unique: true,
-    lowercase: true,
-    validate: [validator.isEmail, 'Please provide a vaild email address'],
-  },
-  photo: {
-    type: String,
-  },
-  password: {
-    type: String,
-    required: [true, 'Please provide a password'],
-    select: false,
-    minLength: 8,
-  },
-  passwordConfirm: {
-    type: String,
-    required: [true, 'Please confirm your password'],
-    validate: {
-      validator: function (el) {
-        return validator.equals(el, this.password);
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: [true, 'User must have a name'],
+    },
+    email: {
+      type: String,
+      required: [true, 'Please provide an email'],
+      unique: true,
+      lowercase: true,
+      validate: [validator.isEmail, 'Please provide a vaild email address'],
+    },
+    photo: {
+      type: String,
+    },
+    password: {
+      type: String,
+      required: [true, 'Please provide a password'],
+      select: false,
+      minLength: 8,
+    },
+    passwordConfirm: {
+      type: String,
+      required: [true, 'Please confirm your password'],
+      validate: {
+        validator: function (el) {
+          return validator.equals(el, this.password);
+        },
+        message: 'Passwords are not the same',
       },
-      message: 'Passwords are not the same',
+    },
+    passwordChangedAt: Date,
+    passwordResetToken: String,
+    passwordResetExpires: Date,
+    role: {
+      type: String,
+      enum: ['admin', 'user'],
+      default: 'user',
+      select: false,
+    },
+    active: {
+      type: Boolean,
+      default: true,
+      select: false,
+    },
+    verificationCode: String,
+    isVerified: {
+      type: Boolean,
+      default: false,
     },
   },
-  passwordChangedAt: Date,
-  passwordResetToken: String,
-  passwordResetExpires: Date,
-  role: {
-    type: String,
-    enum: ['admin', 'user'],
-    default: 'user',
-    select: false,
-  },
-  active: {
-    type: Boolean,
-    default: true,
-    select: false,
-  },
-});
+  { timestamps: true }
+);
 
 // DOCUMENT MIDDLEWARE: runs before or after .save() and .create()
 // Encrypt password when saved to DB

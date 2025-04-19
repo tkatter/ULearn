@@ -12,5 +12,9 @@ router.patch(
   authController.protect,
   authController.updatePassword
 );
-
+router.patch(
+  '/verifyAccount',
+  authController.protect,
+  authController.verifyCode
+);
 module.exports = router;

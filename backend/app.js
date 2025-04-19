@@ -1,21 +1,21 @@
 const express = require('express');
-const morgan = require('morgan');
+const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
 const options = require('./utils/customSwaggerCss');
 const YAML = require('yaml');
 const fs = require('fs');
+const morgan = require('morgan');
 
 const globalErrorHandler = require('./controllers/errorController');
 const AppError = require('./utils/appError');
+const { protect } = require('./controllers/authController');
 
 const oauthRouter = require('./routes/oauthRoutes');
 const authRouter = require('./routes/authRoutes');
 const setRouter = require('./routes/setRoutes');
 const noteRouter = require('./routes/noteRoutes');
 const userRouter = require('./routes/userRoutes');
-
-const { protect, restrictTo } = require('./controllers/authController');
 
 // SWAGGER API Documentation
 const swaggerFile = fs.readFileSync('backend/api/swagger.yaml', 'utf-8');
@@ -27,6 +27,9 @@ const app = express();
 app.use(cors());
 
 // Middleware to parse body data from req.body
+app.use(cookieParser());
+
+// Middleware to parse body data from req.body
 app.use(express.json({ limit: '10kb' }));
 app.use(express.static(__dirname));
 // Development Logging
@@ -35,7 +38,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // app.use((req, res, next) => {
-//   console.log(req.headers);
+//   console.log(req.cookies);
 //   next();
 // });
 

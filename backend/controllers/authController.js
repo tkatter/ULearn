@@ -9,18 +9,33 @@ const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const { sendEmail } = require('../utils/email');
 const sendResponse = require('../utils/sendResponse');
+const generateVerificationCode = require('../utils/generateVerificationCode');
 
 dotenv.config({ path: 'backend/config.env' });
 
-const signToken = id => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
+const signToken = (id, isVerified) => {
+  return jwt.sign({ id, isVerified }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 };
 
 const createSendToken = (user, statusCode, res) => {
-  const token = signToken(user._id);
-  sendResponse(res, statusCode, { token });
+  const token = signToken(user._id, user.isVerified);
+  const cookieOptions = {
+    maxAge: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 60 * 60 * 1000
+    ),
+    secure: false,
+    httpOnly: true,
+  };
+  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
+
+  res.cookie('jwt', token, cookieOptions);
+
+  // Remove password from response
+  user.password = undefined;
+
+  sendResponse(res, statusCode, { token, user });
 };
 
 // Protected routes auth middleware
@@ -32,6 +47,8 @@ exports.protect = catchAsync(async (req, res, next) => {
     req.headers.authorization.startsWith('Bearer')
   ) {
     token = req.headers.authorization.split(' ')[1];
+  } else if (req.cookies.jwt) {
+    token = req.cookies.jwt;
   }
 
   // Return with error if token doesn't exist
@@ -40,6 +57,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   // Token verification
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+  console.log(decoded);
 
   // Check if user exists
   const currentUser = await User.findById(decoded.id).select('+role');
@@ -158,19 +176,40 @@ exports.oathResponse = async (req, res, next) => {
 exports.signup = catchAsync(async (req, res, next) => {
   // Create user in DB from sanitized req.body
   const { name, email, password, passwordConfirm } = req.body;
+
+  // Check if user already exists
+  const doesExist = await User.findOne({ email });
+  if (doesExist)
+    return next(new AppError('A user already exists with that email', 400));
+
+  // If doesn't exist, generate verification code and create user
+  const verificationCode = generateVerificationCode();
+
   const newUser = await User.create({
     name,
     email,
     password,
     passwordConfirm,
+    verificationCode,
   });
 
-  // Create JWT
-  const token = signToken(newUser._id);
+  // Create and send JWT
+  createSendToken(newUser, 200, res);
+});
 
-  // Remove password from response
-  newUser.password = undefined;
-  sendResponse(res, 201, { token, user: newUser });
+exports.verifyCode = catchAsync(async (req, res, next) => {
+  const { user } = req;
+  const recievedCode = req.body.verificationCode;
+  let verifiedUser;
+
+  // TODO: write code for if the verificationCode is not correct, and sending of emails/route redirection
+
+  if (user.verificationCode === recievedCode) {
+    user.isVerified = true;
+    user.verificationCode = undefined;
+    verifiedUser = await user.save({ validateBeforeSave: false });
+  }
+  createSendToken(verifiedUser, 200, res);
 });
 
 exports.login = catchAsync(async (req, res, next) => {
