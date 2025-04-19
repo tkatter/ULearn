@@ -54,9 +54,6 @@ app.use('/api/v1/auth', authRouter);
 app.use(protect);
 app.use('/api/v1/sets', setRouter);
 app.use('/api/v1/notes', noteRouter);
-
-// Restrict these user routes to admins only
-app.use(restrictTo('admin'));
 app.use('/api/v1/users', userRouter);
 
 app.all('/{*splat}', (req, res, next) => {

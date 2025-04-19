@@ -2,6 +2,16 @@
 const User = require('../models/userModel');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
+const sendResponse = require('../utils/sendResponse');
+
+const filterObj = (obj, ...allowedFields) => {
+  const newObj = {};
+  Object.keys(obj).forEach(el => {
+    if (allowedFields.includes(el)) newObj[el] = obj[el];
+  });
+
+  return newObj;
+};
 
 exports.getAllUsers = catchAsync(async (req, res, next) => {
   const users = await User.find();
@@ -48,3 +58,27 @@ exports.createUser = async (req, res, next) => {
     });
   }
 };
+
+exports.updateMe = catchAsync(async (req, res, next) => {
+  // Create error if user POSTs password data
+  if (req.body.password || req.body.passwordConfirm)
+    return next(
+      new AppError(
+        'This route is not for password updates. Please use /api/v1/updatePassword',
+        400
+      )
+    );
+
+  // Update user document
+  const sanitizedBody = filterObj(req.body, 'name', 'email');
+  const updatedUser = await User.findByIdAndUpdate(
+    req.user._id,
+    sanitizedBody,
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+
+  sendResponse(res, 200, { user: updatedUser });
+});
