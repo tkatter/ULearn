@@ -15,7 +15,7 @@ const setRouter = require('./routes/setRoutes');
 const noteRouter = require('./routes/noteRoutes');
 const userRouter = require('./routes/userRoutes');
 
-const { protect } = require('./controllers/authController');
+const { protect, restrictTo } = require('./controllers/authController');
 
 // SWAGGER API Documentation
 const swaggerFile = fs.readFileSync('backend/api/swagger.yaml', 'utf-8');
@@ -49,12 +49,15 @@ app.use(
 
 app.use('/api/v1/oauth', oauthRouter);
 app.use('/api/v1/auth', authRouter);
-app.use('/api/v1/users', userRouter);
 
 // Protect the routes to logged in users below this middleware
 app.use(protect);
 app.use('/api/v1/sets', setRouter);
 app.use('/api/v1/notes', noteRouter);
+
+// Restrict these user routes to admins only
+app.use(restrictTo('admin'));
+app.use('/api/v1/users', userRouter);
 
 app.all('/{*splat}', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl}`, 404));

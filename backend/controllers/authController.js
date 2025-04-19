@@ -35,7 +35,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
   // Check if user exists
-  const currentUser = await User.findById(decoded.id);
+  const currentUser = await User.findById(decoded.id).select('+role');
   if (!currentUser)
     return next(
       new AppError('The user belonging to this token no longer exists', 401)
@@ -52,6 +52,16 @@ exports.protect = catchAsync(async (req, res, next) => {
   req.user = currentUser;
   next();
 });
+
+// Restricted routes auth middleware
+exports.restrictTo = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return next(new AppError('Permission denied', 403));
+    }
+    next();
+  };
+};
 
 exports.oathRequest = async (req, res, next) => {
   try {
@@ -166,7 +176,6 @@ exports.login = catchAsync(async (req, res, next) => {
 
   // Check if user exists && password is correct
   const user = await User.findOne({ email }).select('+password');
-  console.log(user);
   if (!user || !(await user.correctPassword(password, user.password)))
     return next(new AppError('Incorrect email or password', 401));
 
