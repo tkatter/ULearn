@@ -1,6 +1,7 @@
 const { OAuth2Client } = require('google-auth-library');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
+const { promisify } = require('util');
 
 const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
@@ -14,6 +15,43 @@ const signToken = id => {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 };
+
+// Protected routes auth middleware
+exports.protect = catchAsync(async (req, res, next) => {
+  // Get jwt token and check if exists
+  let token;
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer')
+  ) {
+    token = req.headers.authorization.split(' ')[1];
+  }
+
+  // Return with error if token doesn't exist
+  if (!token)
+    return next(new AppError('You are not logged in, login for access', 401));
+
+  // Token verification
+  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+
+  // Check if user exists
+  const currentUser = await User.findById(decoded.id);
+  if (!currentUser)
+    return next(
+      new AppError('The user belonging to this token no longer exists', 401)
+    );
+
+  // Check if user changed password after token was issued
+  if (currentUser.changedPasswordAfter(decoded.iat)) {
+    return next(
+      new AppError('User recently changed password, login again', 401)
+    );
+  }
+
+  // Grant access to protected route
+  req.user = currentUser;
+  next();
+});
 
 exports.oathRequest = async (req, res, next) => {
   try {
