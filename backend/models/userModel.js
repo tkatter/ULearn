@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -34,6 +35,8 @@ const userSchema = new mongoose.Schema({
     },
   },
   passwordChangedAt: Date,
+  passwordResetToken: String,
+  passwordResetExpires: Date,
   role: {
     type: String,
     enum: ['admin', 'user'],
@@ -43,6 +46,8 @@ const userSchema = new mongoose.Schema({
 });
 
 // DOCUMENT MIDDLEWARE: runs before or after .save() and .create()
+
+// Encrypt password when saved to DB
 userSchema.pre('save', async function (next) {
   // If the password has not been modified, then return immediately and call next()
   if (!this.isModified('password')) return next();
@@ -52,16 +57,22 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
-// userSchema.post('save', function (next) {
-//   this.select('-password -passwordConfirm -role');
-//   next();
-// });
+// Update chandgedPasswordAt when password is modified and document is not new
+userSchema.pre('save', function (next) {
+  // If the password has not been modified or the document is new, then return immediately and call next()
+  if (!this.isModified('password') || this.isNew) return next();
 
-// INSTANCE METHOD
+  // Set the passwordChangedAt to 1s in the past to ensure the jwt is created after the timestamp
+  this.passwordChangedAt = Date.now() - 1000;
+  next();
+});
+
+// INSTANCE METHODS
 userSchema.methods.correctPassword = async function (
   candidatePassword,
   userPassword
 ) {
+  // Compare received password to password saved in DB
   return await bcrypt.compare(candidatePassword, userPassword);
 };
 
@@ -77,6 +88,21 @@ userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
 
   // False means not changed
   return false;
+};
+
+userSchema.methods.generateResetToken = function () {
+  // Plain text token
+  const resetToken = crypto.randomBytes(32).toString('hex');
+
+  // Encrypted token - this is the one saved to DB
+  this.passwordResetToken = crypto
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
+
+  this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+
+  return resetToken;
 };
 
 const User = mongoose.model('User', userSchema);
