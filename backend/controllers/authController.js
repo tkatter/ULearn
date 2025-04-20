@@ -6,9 +6,9 @@ const crypto = require('crypto');
 
 const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
-const AppError = require('../utils/appError');
+const AppError = require('../utils/AppError');
 const { sendEmail } = require('../utils/email');
-const sendResponse = require('../utils/sendResponse');
+const SendResponse = require('../utils/sendResponse');
 const generateVerificationCode = require('../utils/generateVerificationCode');
 // const verificationEmailTemplate = require('../email/verifyTemplate');
 
@@ -20,7 +20,7 @@ const signToken = (id, isVerified) => {
   });
 };
 
-const createSendToken = (user, statusCode, res) => {
+const createSendToken = (res, statusCode, user, message) => {
   const token = signToken(user._id, user.isVerified);
   const cookieOptions = {
     maxAge: new Date(
@@ -36,7 +36,12 @@ const createSendToken = (user, statusCode, res) => {
   // Remove password from response
   user.password = undefined;
 
-  sendResponse(res, statusCode, { token, user });
+  const response = new SendResponse(res, statusCode, {
+    token,
+    message,
+    data: { user },
+  });
+  response.send();
 };
 
 // Protected routes auth middleware
@@ -58,7 +63,6 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   // Token verification
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
-  console.log(decoded);
 
   // Check if user exists
   const currentUser = await User.findById(decoded.id).select('+role');
@@ -195,12 +199,13 @@ exports.signup = catchAsync(async (req, res, next) => {
   });
 
   // Create and send JWT
-  createSendToken(newUser, 200, res);
+  const resMessage = 'User successfully signed up';
+  createSendToken(res, 200, newUser, resMessage);
 });
 
 exports.verifyCode = catchAsync(async (req, res, next) => {
   const { user } = req;
-  // TODO: sending of emails/route redirection
+  // TODO: add expiration to code and sending of emails/route redirection
   if (!req.body || !req.body.verificationCode)
     return next(new AppError('Please provide a verification code', 400));
 
@@ -214,7 +219,7 @@ exports.verifyCode = catchAsync(async (req, res, next) => {
   user.verificationCode = undefined;
   const verifiedUser = await user.save({ validateBeforeSave: false });
 
-  createSendToken(verifiedUser, 200, res);
+  createSendToken(res, 200, verifiedUser, 'Account successfully verified!');
 });
 
 exports.login = catchAsync(async (req, res, next) => {
@@ -233,7 +238,8 @@ exports.login = catchAsync(async (req, res, next) => {
     return next(new AppError('Incorrect email or password', 401));
 
   // If everything is valid, send jwt to client
-  createSendToken(user, 200, res);
+  const resMessage = 'User successfully logged in';
+  createSendToken(res, 200, user, resMessage);
 });
 
 exports.forgotPassword = catchAsync(async (req, res, next) => {
@@ -269,10 +275,10 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
       message,
     });
 
-    res.status(200).json({
-      status: 'success',
-      message: 'Token sent to email!',
+    const response = new SendResponse(res, 200, {
+      message: 'Token send to email!',
     });
+    response.send();
   } catch (err) {
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
@@ -309,7 +315,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   // Update changedPasswordAt property for the user
 
   // Log the user in, send jwt
-  createSendToken(user, 200, res);
+  createSendToken(res, 200, user, 'Password successfully reset!');
 });
 
 exports.updatePassword = catchAsync(async (req, res, next) => {
@@ -344,5 +350,5 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   await user.save();
 
   // Log user in, send jwt
-  createSendToken(user, 200, res);
+  createSendToken(res, 200, user, 'Password successfully updated!');
 });

@@ -8,7 +8,7 @@ const fs = require('fs');
 const morgan = require('morgan');
 
 const globalErrorHandler = require('./controllers/errorController');
-const AppError = require('./utils/appError');
+const AppError = require('./utils/AppError');
 const { protect } = require('./controllers/authController');
 
 const oauthRouter = require('./routes/oauthRoutes');
@@ -55,8 +55,8 @@ app.use('/api/v1/auth', authRouter);
 
 // Protect the routes to logged in users below this middleware
 app.use(protect);
-app.use('/api/v1/sets', setRouter);
 app.use('/api/v1/notes', noteRouter);
+app.use('/api/v1/sets', setRouter);
 app.use('/api/v1/users', userRouter);
 
 app.all('/{*splat}', (req, res, next) => {

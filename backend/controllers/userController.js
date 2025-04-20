@@ -1,8 +1,8 @@
 // const mongoose = require('mongoose');
 const User = require('../models/userModel');
-const AppError = require('../utils/appError');
+const AppError = require('../utils/AppError');
 const catchAsync = require('../utils/catchAsync');
-const sendResponse = require('../utils/sendResponse');
+const SendResponse = require('../utils/sendResponse');
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -16,13 +16,11 @@ const filterObj = (obj, ...allowedFields) => {
 exports.getAllUsers = catchAsync(async (req, res, next) => {
   const users = await User.find();
 
-  res.status(200).json({
-    status: 'success',
+  const response = new SendResponse(res, 200, {
     results: users.length,
-    data: {
-      users,
-    },
+    data: { users },
   });
+  response.send();
 });
 
 exports.getUser = catchAsync(async (req, res, next) => {
@@ -32,32 +30,36 @@ exports.getUser = catchAsync(async (req, res, next) => {
   // Return error if no user is found
   if (!user) return next(new AppError('No user found with that Id', 400));
 
-  res.status(200).json({
-    status: 'success',
-    data: {
-      user,
-    },
-  });
+  const response = new SendResponse(res, 200, { data: { user } });
+  response.send();
 });
 
-exports.createUser = async (req, res, next) => {
-  try {
-    const newUser = await User.create(req.body);
+exports.createUser = catchAsync(async (req, res, next) => {
+  // Check if a user already exists
+  const userExists = await User.findOne({ email: req.body.email });
+  if (userExists)
+    return next(
+      new AppError('A user already exists with that email address', 400)
+    );
 
-    res.status(201).json({
-      status: 'success',
-      data: {
-        user: newUser,
-      },
-    });
-  } catch (err) {
-    console.log(err);
-    res.status(400).json({
-      status: 'fail',
-      message: err,
-    });
-  }
-};
+  // If not, create new user
+  const newUser = await User.create({
+    name: req.body.name,
+    email: req.body.email,
+    password: req.body.password,
+    passwordConfirm: req.body.passwordConfirm,
+    role: req.body.role,
+  });
+
+  // Omit password from response
+  newUser.password = undefined;
+
+  const response = new SendResponse(res, 201, {
+    message: 'User successfully created!',
+    data: { user: newUser },
+  });
+  response.send();
+});
 
 exports.updateMe = catchAsync(async (req, res, next) => {
   // Create error if user POSTs password data
@@ -80,12 +82,17 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     }
   );
 
-  sendResponse(res, 200, { user: updatedUser });
+  const response = new SendResponse(res, 200, {
+    message: 'User successfully updated!',
+    data: { user: updatedUser },
+  });
+  response.send();
 });
 
 exports.deleteMe = catchAsync(async (req, res, next) => {
   // Find user by Id and set active property to false
   await User.findByIdAndUpdate(req.user.id, { active: false });
 
-  sendResponse(res, 204, null);
+  const response = new SendResponse(res, 204);
+  response.send();
 });

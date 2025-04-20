@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 
+// TODO: Add validators? (trim?) create parent references to the user that created the note
+
 const noteSchema = new mongoose.Schema(
   {
     term: {
@@ -19,6 +21,11 @@ const noteSchema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: 'Set',
       required: [true, 'Note must belong to a Set.'],
+    },
+    user: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'User',
+      required: [true, 'Note must belong to a User.'],
     },
   },
   {

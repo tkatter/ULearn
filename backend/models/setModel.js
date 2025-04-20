@@ -8,7 +8,6 @@ const setSchema = new mongoose.Schema(
     name: {
       type: String,
       required: [true, 'A set must have a name'],
-      trim: true,
       maxLength: [
         40,
         'A tour name must have less than or equal to 40 characters',
@@ -25,8 +24,14 @@ const setSchema = new mongoose.Schema(
     },
     description: {
       type: String,
-      trim: true,
+      required: [true, 'A set must have a name'],
+
       // select: false,
+    },
+    user: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'User',
+      required: [true, 'Set must belong to a User.'],
     },
     secretSet: {
       type: Boolean,
@@ -45,6 +50,7 @@ setSchema.virtual('notes', {
   ref: 'Note',
   foreignField: 'set',
   localField: '_id',
+  // count: true,
 });
 
 // DOCUMENT MIDDLEWARE: runs before .save() and .create()
@@ -63,6 +69,14 @@ setSchema.post('save', function () {
 setSchema.pre(/^find/, function (next) {
   this.find({ secretSet: { $ne: true } });
   // this.start = Date.now();
+  next();
+});
+
+setSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'user',
+    select: 'name email',
+  });
   next();
 });
 
