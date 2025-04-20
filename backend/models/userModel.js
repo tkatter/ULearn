@@ -55,8 +55,16 @@ const userSchema = new mongoose.Schema(
       default: false,
     },
   },
-  { timestamps: true }
+  { toJSON: { virtuals: true }, toObject: { virtuals: true }, timestamps: true }
 );
+
+// VIRTUAL POPULATE SETS
+userSchema.virtual('sets', {
+  ref: 'Set',
+  foreignField: 'user',
+  localField: '_id',
+  // count: true,
+});
 
 // DOCUMENT MIDDLEWARE: runs before or after .save() and .create()
 // Encrypt password when saved to DB

@@ -72,13 +72,13 @@ setSchema.pre(/^find/, function (next) {
   next();
 });
 
-setSchema.pre(/^find/, function (next) {
-  this.populate({
-    path: 'user',
-    select: 'name email',
-  });
-  next();
-});
+// setSchema.pre(/^find/, function (next) {
+//   this.populate({
+//     path: 'user',
+//     select: 'name email',
+//   });
+//   next();
+// });
 
 // aggregation
 

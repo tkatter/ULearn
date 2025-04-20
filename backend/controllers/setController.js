@@ -4,7 +4,10 @@ const AppError = require('../utils/AppError');
 const SendResponse = require('../utils/sendResponse');
 
 exports.getAllSets = catchAsync(async (req, res, next) => {
-  const sets = await Set.find();
+  const sets = await Set.find().populate({
+    path: 'user',
+    select: 'name email',
+  });
   let resOptions;
   if (sets.length === 0) {
     resOptions = {
@@ -24,17 +27,22 @@ exports.getAllSets = catchAsync(async (req, res, next) => {
 
 exports.getSet = catchAsync(async (req, res, next) => {
   const id = req.params.setId;
-  const set = await Set.findById(id).populate('notes');
+  const set = await Set.findById(id)
+    .populate({
+      path: 'notes',
+      select: 'term definition -set',
+    })
+    .populate({
+      path: 'user',
+      select: 'name email',
+    });
+
   if (!set) {
     return next(new AppError('No document found with that ID', 404));
   }
 
-  res.status(200).json({
-    status: 'success',
-    data: {
-      set,
-    },
-  });
+  const response = new SendResponse(res, 200, { data: { set } });
+  response.send();
 });
 
 exports.createSet = catchAsync(async (req, res, next) => {

@@ -25,7 +25,10 @@ exports.getAllUsers = catchAsync(async (req, res, next) => {
 
 exports.getUser = catchAsync(async (req, res, next) => {
   const id = req.params.usrId;
-  const user = await User.findById(id);
+  const user = await User.findById(id).populate({
+    path: 'sets',
+    select: 'name -user',
+  });
 
   // Return error if no user is found
   if (!user) return next(new AppError('No user found with that Id', 400));
