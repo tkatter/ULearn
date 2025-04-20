@@ -1,8 +1,13 @@
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import Login from './pages/Login';
-import Homepage from './pages/Homepage';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+import GlobalStyles from './styles/GlobalStyles';
+import Homepage from './pages/Homepage';
+import Dashboard from './pages/Dashboard';
+import Login from './pages/Login';
+import AppLayout from './ui/AppLayout';
+import Account from './pages/Account';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -14,13 +19,21 @@ const queryClient = new QueryClient({
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ReactQueryDevtools initialIsOpen={false} />
-      <Routes>
-        <Route index element={<Homepage />} />
-        <Route path="login" element={<Login />} />
-      </Routes>
-    </QueryClientProvider>
+    <>
+      <GlobalStyles />
+      <QueryClientProvider client={queryClient}>
+        <ReactQueryDevtools initialIsOpen={false} />
+        <Routes>
+          <Route element={<AppLayout />}>
+            <Route index element={<Navigate replace to="homepage" />} />
+            <Route path="homepage" element={<Homepage />} />
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="account" element={<Account />} />
+          </Route>
+          <Route path="login" element={<Login />} />
+        </Routes>
+      </QueryClientProvider>
+    </>
   );
 }
 
