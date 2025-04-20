@@ -10,6 +10,7 @@ const AppError = require('../utils/appError');
 const { sendEmail } = require('../utils/email');
 const sendResponse = require('../utils/sendResponse');
 const generateVerificationCode = require('../utils/generateVerificationCode');
+// const verificationEmailTemplate = require('../email/verifyTemplate');
 
 dotenv.config({ path: 'backend/config.env' });
 
@@ -199,16 +200,20 @@ exports.signup = catchAsync(async (req, res, next) => {
 
 exports.verifyCode = catchAsync(async (req, res, next) => {
   const { user } = req;
+  // TODO: sending of emails/route redirection
+  if (!req.body || !req.body.verificationCode)
+    return next(new AppError('Please provide a verification code', 400));
+
   const recievedCode = req.body.verificationCode;
-  let verifiedUser;
 
-  // TODO: write code for if the verificationCode is not correct, and sending of emails/route redirection
+  // Send error if recievedCode doesn't match
+  if (user.verificationCode !== recievedCode)
+    return next(new AppError('Verification codes do not match', 400));
 
-  if (user.verificationCode === recievedCode) {
-    user.isVerified = true;
-    user.verificationCode = undefined;
-    verifiedUser = await user.save({ validateBeforeSave: false });
-  }
+  user.isVerified = true;
+  user.verificationCode = undefined;
+  const verifiedUser = await user.save({ validateBeforeSave: false });
+
   createSendToken(verifiedUser, 200, res);
 });
 

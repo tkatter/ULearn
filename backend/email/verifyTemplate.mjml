@@ -1,0 +1,60 @@
+<mjml>
+  <mj-head>
+    <mj-font
+      name="Rubik"
+      href="https://fonts.googleapis.com/css2?family=Rubik"
+    />
+    <mj-attributes>
+      <mj-all font-family="Rubik" />
+    </mj-attributes>
+  </mj-head>
+  <mj-body>
+    <!-- Company Header -->
+    <mj-section background-color="#0a8560">
+      <mj-column width="100%">
+        <mj-text
+          color="#fff"
+          align="center"
+          font-size="32px"
+          font-weight="700"
+          letter-spacing="1.75px"
+        >
+          ULearn.io
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    <!-- Introduction Text -->
+    <mj-section background-color="#fafafa">
+      <mj-column width="100%">
+        <mj-text
+          color="#333"
+          font-weight="600"
+          font-size="24px"
+          align="center"
+          letter-spacing="1.5px"
+        >
+          VERIFY YOUR ACCOUNT
+        </mj-text>
+        <mj-spacer height="25px" />
+        <mj-text
+          color="#6c89fb"
+          font-weight="600"
+          font-size="48px"
+          align="center"
+        >
+          824587
+        </mj-text>
+        <mj-spacer height="25px" />
+        <mj-button
+          href="<VERIFICATION_HREF>"
+          background-color="#374a96"
+          width="150px"
+          letter-spacing="1px"
+          font-size="18px"
+        >
+          VERIFY
+        </mj-button>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>
