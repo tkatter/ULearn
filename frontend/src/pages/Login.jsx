@@ -1,4 +1,5 @@
 import { useForm } from 'react-hook-form';
+import isEmail from 'validator/lib/isEmail';
 
 import styled from 'styled-components';
 import Button from '../ui/Button';
@@ -9,6 +10,7 @@ import Label from '../ui/Label';
 import Form from '../ui/Form';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 
 const StyledLoginPage = styled.div`
   background-color: #0ca678;
@@ -35,12 +37,19 @@ const StyledLoginForm = styled.div`
   padding: 3.2rem 6.4rem;
   border-radius: 25px;
   box-shadow: var(--shadow-md);
+  margin: 0 auto;
+  max-width: 700;
 `;
 
 const StyledFormButtons = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1rem;
+`;
+
+const Error = styled.span`
+  font-size: 1.4rem;
+  color: var(--color-red-700);
 `;
 
 async function login({ email, password }) {
@@ -53,11 +62,10 @@ async function login({ email, password }) {
       body: JSON.stringify({ email, password }),
     });
     const data = await res.json();
-    console.log(data);
+    // console.log(data);
     return data;
   } catch (err) {
-    console.error(err);
-    throw new Error('There was a problem logging in');
+    throw new Error(err);
   }
 }
 
@@ -65,13 +73,20 @@ function Login() {
   const { register, handleSubmit, reset } = useForm();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [formError, setFormError] = useState(null);
+  const [loginError, setLoginError] = useState(null);
 
   const { mutate, isPending } = useMutation({
     mutationFn: login,
     onSuccess: data => {
+      if (data.status === 'fail') {
+        setLoginError(data);
+        return reset();
+      }
+      setLoginError(null);
       console.log('User successfully logged in!!');
       // TODO: use query client to update invalidate the current user data update with logged in data
-      queryClient.setQueryData(['user'], data);
+      queryClient.setQueryData(['user'], data.data.user);
       reset();
       navigate('/dashboard');
     },
@@ -82,31 +97,48 @@ function Login() {
     mutate(data);
   }
 
+  function onError(error) {
+    console.log(Object.values(error));
+    setFormError(error);
+  }
+
   return (
     <StyledLoginPage>
       <StyledLoginForm>
         <StyledHeading as="h1">LOGIN</StyledHeading>
-        <Form onSubmit={handleSubmit(onSubmit)}>
+        <Form onSubmit={handleSubmit(onSubmit, onError)}>
           <FormRow>
-            <Label>Username or Email</Label>
+            <Label htmlFor="email">Email address</Label>
             <Input
-              placeholder="Username or email"
+              placeholder="Email"
               type="text"
               id="email"
-              {...register('email', { required: true })}
+              {...register('email', {
+                required: 'Email is required',
+                validate: value => {
+                  if (!isEmail(value))
+                    return 'Email is not a valid email address';
+                },
+              })}
             />
+            {formError?.email?.message && (
+              <Error>{formError?.email?.message}</Error>
+            )}
           </FormRow>
 
           <FormRow>
-            <Label>Password</Label>
+            <Label htmlFor="password">Password</Label>
             <Input
               placeholder="Password"
               type="password"
               id="password"
-              {...register('password', { required: true })}
+              {...register('password', { required: 'Password is required' })}
             />
+            {formError?.password?.message && (
+              <Error>{formError?.password?.message}</Error>
+            )}
           </FormRow>
-
+          {loginError && <Error>{loginError.message}</Error>}
           <StyledFormButtons>
             <Button
               disabled={isPending}
