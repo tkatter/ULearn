@@ -98,15 +98,15 @@ button {
 }
 
 select:disabled,
+button:focus,
+select:focus,
 input:disabled {
   background-color: var(--color-grey-200);
   color: var(--color-grey-500);
 }
 
 input:focus,
-button:focus,
-textarea:focus,
-select:focus {
+textarea:focus {
   outline: 2px solid #6c89fb;
   outline-offset: -1px;
 }

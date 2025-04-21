@@ -1,5 +1,21 @@
 import styled, { css } from 'styled-components';
 
+const alignment = {
+  centered: css`
+    align-items: center;
+    justify-content: center;
+  `,
+  jusCenter: css`
+    justify-content: center;
+  `,
+  gap: css`
+    gap: 1rem;
+  `,
+  jusEnd: css`
+    justify-content: flex-end;
+  `,
+};
+
 const Row = styled.div`
   display: flex;
 
@@ -16,6 +32,8 @@ const Row = styled.div`
       flex-direction: column;
       gap: 1.6rem;
     `}
+    
+  ${props => (props.align ? alignment[props.align] : alignment[props.align])}
 `;
 
 Row.defaultProps = {

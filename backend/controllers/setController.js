@@ -4,10 +4,15 @@ const AppError = require('../utils/AppError');
 const SendResponse = require('../utils/sendResponse');
 
 exports.getAllSets = catchAsync(async (req, res, next) => {
-  const sets = await Set.find().populate({
-    path: 'user',
-    select: 'name email',
-  });
+  const sets = await Set.find()
+    .populate({
+      path: 'user',
+      select: 'name email',
+    })
+    .populate({
+      path: 'notes',
+    });
+
   let resOptions;
   if (sets.length === 0) {
     resOptions = {

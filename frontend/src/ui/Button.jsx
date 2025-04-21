@@ -11,10 +11,12 @@ const sizes = {
   medium: css`
     font-size: 1.4rem;
     padding: 1.2rem 1.6rem;
+    letter-spacing: 1.2px;
     font-weight: 500;
   `,
   large: css`
-    font-size: 1.6rem;
+    font-size: 1.8rem;
+    letter-spacing: 1.3px;
     padding: 1.2rem 2.4rem;
     font-weight: 500;
   `,
@@ -22,20 +24,30 @@ const sizes = {
 
 const variations = {
   primary: css`
-    color: var(--color-brand-50);
-    background-color: var(--color-brand-600);
+    color: var(--color-grey-0);
+    border: 2px solid var(--color-grey-200);
+    background-color: #0b956c;
 
     &:hover {
-      background-color: var(--color-brand-700);
+      background-color: #0a8560;
     }
   `,
   secondary: css`
-    color: var(--color-grey-600);
-    background: var(--color-grey-0);
-    border: 1px solid var(--color-grey-200);
+    color: var(--color-grey-0);
+    background: #6c89fb;
 
     &:hover {
-      background-color: var(--color-grey-50);
+      background-color: #566ec9;
+    }
+  `,
+  tertiary: css`
+    color: var(--color-grey-700);
+    background: var(--color-grey-0);
+    border: 2px solid var(--color-grey-200);
+
+    &:hover {
+      color: var(--color-grey-0);
+      background-color: #6c89fb;
     }
   `,
   danger: css`
@@ -56,10 +68,5 @@ const Button = styled.button`
   ${props => sizes[props.size]}
   ${props => variations[props.variation]}
 `;
-
-Button.defaultProps = {
-  size: 'medium',
-  variation: 'primary',
-};
 
 export default Button;

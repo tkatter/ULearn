@@ -50,7 +50,7 @@ setSchema.virtual('notes', {
   ref: 'Note',
   foreignField: 'set',
   localField: '_id',
-  // count: true,
+  count: true,
 });
 
 // DOCUMENT MIDDLEWARE: runs before .save() and .create()

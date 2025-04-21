@@ -1,6 +1,7 @@
 import Heading from '../ui/Heading';
 import Row from '../ui/Row';
-import Button from '../ui/Button';
+import Whitespace from '../ui/Whitespace';
+import SetsTable from '../features/dashboard/SetsTable';
 
 function Dashboard() {
   return (
@@ -8,18 +9,9 @@ function Dashboard() {
       <Row type="horizontal">
         <Heading as="h1">Dashboard</Heading>
       </Row>
-
-      <Row type="horizontal">
-        <Heading as="h2">Your Sets</Heading>
-
-        <Row type="horizontal">
-          <Button size="small" variation="primary">
-            Create a set
-          </Button>
-          <Button size="small" variation="primary">
-            Edit a set
-          </Button>
-        </Row>
+      <Whitespace height="3.2rem;" />
+      <Row type="vertical">
+        <SetsTable />
       </Row>
     </>
   );
