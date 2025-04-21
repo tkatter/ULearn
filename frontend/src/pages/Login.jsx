@@ -64,14 +64,14 @@ async function login({ email, password }) {
 function Login() {
   const { register, handleSubmit, reset } = useForm();
   const navigate = useNavigate();
-  // const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
   const { mutate, isPending } = useMutation({
     mutationFn: login,
-    onSuccess: () => {
+    onSuccess: data => {
       console.log('User successfully logged in!!');
       // TODO: use query client to update invalidate the current user data update with logged in data
-      // queryClient.invalidateQueries({ queryKey: ['user'] });
+      queryClient.setQueryData(['user'], data);
       reset();
       navigate('/dashboard');
     },
