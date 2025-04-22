@@ -9,6 +9,7 @@ import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import AppLayout from './ui/AppLayout';
 import Account from './pages/Account';
+import { UserProvider } from './contexts/userContext';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -24,15 +25,17 @@ function App() {
       <ReactQueryDevtools initialIsOpen={false} />
       <GlobalStyles />
       <BrowserRouter>
-        <Routes>
-          <Route element={<AppLayout />}>
-            <Route index element={<Navigate replace to="homepage" />} />
-            <Route path="homepage" element={<Homepage />} />
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="account" element={<Account />} />
-          </Route>
-          <Route path="login" element={<Login />} />
-        </Routes>
+        <UserProvider>
+          <Routes>
+            <Route element={<AppLayout />}>
+              <Route index element={<Navigate replace to="homepage" />} />
+              <Route path="homepage" element={<Homepage />} />
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="account" element={<Account />} />
+            </Route>
+            <Route path="login" element={<Login />} />
+          </Routes>
+        </UserProvider>
       </BrowserRouter>
       <Toaster
         position="top-right"

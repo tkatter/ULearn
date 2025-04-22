@@ -23,13 +23,11 @@ const Main = styled.main`
 function AppLayout() {
   return (
     <StyledAppLayout>
-      <UserProvider>
-        <Header />
-        <Sidebar />
-        <Main>
-          <Outlet />
-        </Main>
-      </UserProvider>
+      <Header />
+      <Sidebar />
+      <Main>
+        <Outlet />
+      </Main>
     </StyledAppLayout>
   );
 }

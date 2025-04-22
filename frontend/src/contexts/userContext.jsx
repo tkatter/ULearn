@@ -7,7 +7,7 @@ const UserContext = createContext();
 
 const initialState = {
   // User object from api fetch
-  user: {},
+  user: null,
   // Has valid (not expired) jwt cookie
   isAuthorized: false,
   // Is logged in
@@ -24,7 +24,7 @@ function reducer(state, { type, payload }) {
         isAuthorized: true,
       };
     default:
-      break;
+      throw new Error('Something went wrong in the UserContext reducer');
   }
 }
 
