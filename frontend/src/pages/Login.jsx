@@ -1,7 +1,5 @@
 import styled from 'styled-components';
 
-import { UserProvider } from '../contexts/userContext';
-
 import CompanyTitle from '../ui/CompanyTitle';
 import Heading from '../ui/Heading';
 import LoginForm from '../features/login/LoginForm';
@@ -19,11 +17,9 @@ const StyledLogo = styled(CompanyTitle)`
 function Login() {
   return (
     <LoginLayout>
-      <UserProvider>
-        <StyledLogo />
-        <Heading as="h4">Log in to your account</Heading>
-        <LoginForm />
-      </UserProvider>
+      <StyledLogo />
+      <Heading as="h4">Log in to your account</Heading>
+      <LoginForm />
     </LoginLayout>
   );
 }

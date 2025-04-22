@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-// import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { useUsers } from '../../contexts/userContext';
 import toast from 'react-hot-toast';
@@ -13,6 +13,10 @@ async function loginApi(email, password) {
       },
       body: JSON.stringify({ email, password }),
     });
+
+    // Throw error for 500 status code
+    if (res?.status === 500)
+      throw new Error('Something went wrong, please try again later');
 
     const data = await res.json();
 
@@ -28,7 +32,7 @@ async function loginApi(email, password) {
 
 export function useLogin() {
   const { dispatch } = useUsers();
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const { mutate: login, isPending } = useMutation({
     mutationKey: ['user'],
@@ -39,7 +43,7 @@ export function useLogin() {
     onSuccess: data => {
       console.log(data.data.user);
       dispatch({ type: 'loggedIn', payload: data.data.user });
-      // navigate('/dashboard');
+      navigate('/dashboard');
     },
 
     onError: error => {
