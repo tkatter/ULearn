@@ -27,7 +27,7 @@ const StyledButton = styled.button`
 
 function EditSetBtn() {
   return (
-    <Row type="horizontal" align="gap">
+    <Row $type="horizontal" $align="gap">
       <StyledButton>
         <HiOutlinePencilSquare />
       </StyledButton>

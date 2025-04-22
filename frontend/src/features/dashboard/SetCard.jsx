@@ -32,18 +32,18 @@ function SetCard({ set }) {
   return (
     <>
       <StyledContainer
-        padding="1.2rem 2.4rem"
-        bgColor="white"
-        type="flexColumn"
-        border="primary"
+        $padding="1.2rem 2.4rem"
+        $bgColor="white"
+        $type="flexColumn"
+        $border="primary"
       >
-        <Row type="horizontal">
+        <Row $type="horizontal">
           <Heading as="h3">{name}</Heading>
           <SetBtns />
         </Row>
         <StyledInfo>
           <p>{description}</p>
-          <Row type="horizontal" align="jusEnd">
+          <Row $type="horizontal" $align="jusEnd">
             <span>
               {numNotes} {numNotes === 1 ? 'Note' : 'Notes'}
             </span>

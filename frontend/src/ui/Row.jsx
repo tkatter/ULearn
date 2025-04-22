@@ -20,24 +20,24 @@ const Row = styled.div`
   display: flex;
 
   ${props =>
-    props.type === 'horizontal' &&
+    props.$type === 'horizontal' &&
     css`
       justify-content: space-between;
       /* gap: 1.6rem; */
       align-items: center;
     `}
   ${props =>
-    props.type === 'vertical' &&
+    props.$type === 'vertical' &&
     css`
       flex-direction: column;
       gap: 1.6rem;
     `}
     
-  ${props => (props.align ? alignment[props.align] : alignment[props.align])}
+  ${props => (props.$align ? alignment[props.$align] : alignment[props.$align])}
 `;
 
 Row.defaultProps = {
-  type: 'horizontal',
+  $type: 'horizontal',
 };
 
 export default Row;

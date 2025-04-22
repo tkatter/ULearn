@@ -9,9 +9,8 @@ router
   .get(authController.restrictTo('admin'), userController.getAllUsers)
   .post(authController.restrictTo('admin'), userController.createUser);
 
-router
-  .route('/:usrId')
-  .get(authController.restrictTo('admin'), userController.getUser);
+router.route('/:usrId').get(userController.getUser);
+// .get(authController.restrictTo('admin'), userController.getUser);
 
 router.patch('/updateMe', userController.updateMe);
 router.delete('/deleteMe', userController.deleteMe);

@@ -9,11 +9,7 @@ const StyledTitle = styled.h1`
 `;
 
 function CompanyTitle() {
-  return (
-    <>
-      <StyledTitle>ULearn.io</StyledTitle>
-    </>
-  );
+  return <StyledTitle>ULearn.io</StyledTitle>;
 }
 
 export default CompanyTitle;

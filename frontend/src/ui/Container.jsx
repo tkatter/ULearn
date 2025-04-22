@@ -34,13 +34,13 @@ const types = {
 };
 
 const Container = styled.div`
-  ${props => types[props.type]}
-  ${props => (props.bgColor ? bgColors[props.bgColor] : '')}
-  ${props => (props.border ? borders[props.border] : '')}
+  ${props => types[props.$type]}
+  ${props => (props.$bgColor ? bgColors[props.$bgColor] : '')}
+  ${props => (props.$border ? borders[props.$border] : '')}
   ${props =>
-    props.padding
+    props.$padding
       ? css`
-          padding: ${props.padding};
+          padding: ${props.$padding};
         `
       : ''}
 `;

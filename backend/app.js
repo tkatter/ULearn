@@ -55,9 +55,9 @@ app.use('/api/v1/auth', authRouter);
 
 // Protect the routes to logged in users below this middleware
 app.use('/api/v1/sets', setRouter);
+app.use('/api/v1/users', userRouter);
 app.use(protect);
 app.use('/api/v1/notes', noteRouter);
-app.use('/api/v1/users', userRouter);
 
 app.all('/{*splat}', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl}`, 404));

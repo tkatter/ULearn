@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useSets } from '../../hooks/useSets';
 import Heading from '../../ui/Heading';
 import Spinner from '../../ui/Spinner';
 import Container from '../../ui/Container';
@@ -7,30 +7,12 @@ import styled from 'styled-components';
 import Button from '../../ui/Button';
 import Row from '../../ui/Row';
 
-async function getSets() {
-  try {
-    const res = await fetch('/api/v1/sets');
-    const data = await res.json();
-    return data;
-  } catch (err) {
-    console.error(err);
-    throw new Error('There was a problem fetching the sets');
-  }
-}
-
 const StyledSetGrid = styled(Container)`
   gap: 2rem;
 `;
 
 function SetsTable() {
-  const {
-    isPending,
-    data: res,
-    error,
-  } = useQuery({
-    queryKey: ['sets'],
-    queryFn: getSets,
-  });
+  const { isPending, res } = useSets();
 
   if (isPending) return <Spinner />;
   if (res.status !== 'success')
@@ -41,19 +23,19 @@ function SetsTable() {
 
   return (
     <>
-      <Row type="horizontal">
+      <Row $type="horizontal">
         <Heading as="h2">Your Sets ({results})</Heading>
 
-        <Row type="horizontal" align="jusEnd">
-          <Button size="small" variation="primary">
+        <Row $type="horizontal" $align="jusEnd">
+          <Button $size="small" $variation="primary">
             Create a set
           </Button>
-          <Button size="small" variation="primary">
+          <Button $size="small" $variation="primary">
             Edit a set
           </Button>
         </Row>
       </Row>
-      <StyledSetGrid type="grid2x">
+      <StyledSetGrid $type="grid2x">
         {sets.map(set => (
           <SetCard key={set._id} set={set} />
         ))}

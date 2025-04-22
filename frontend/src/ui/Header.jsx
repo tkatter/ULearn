@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import MainNav from './MainNav';
 import CompanyTitle from './CompanyTitle';
 import SearchBar from './SearchBar';
+import { useUsers } from '../contexts/userContext';
 
 const StyledHeader = styled.header`
   background-color: var(--color-grey-0);
@@ -20,11 +21,13 @@ const StyledHeader = styled.header`
 `;
 
 function Header() {
+  const { isLoggedIn } = useUsers();
+
   return (
     <StyledHeader>
       <CompanyTitle />
       <SearchBar />
-      <MainNav />
+      {isLoggedIn && <MainNav />}
     </StyledHeader>
   );
 }
