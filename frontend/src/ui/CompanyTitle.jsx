@@ -1,3 +1,4 @@
+import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 
 const StyledTitle = styled.h1`
@@ -9,7 +10,13 @@ const StyledTitle = styled.h1`
 `;
 
 function CompanyTitle() {
-  return <StyledTitle>ULearn.io</StyledTitle>;
+  return (
+    <>
+      <NavLink to="/home">
+        <StyledTitle>ULearn.io</StyledTitle>
+      </NavLink>
+    </>
+  );
 }
 
 export default CompanyTitle;

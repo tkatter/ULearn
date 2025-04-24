@@ -9,7 +9,7 @@ const StyledSidebar = styled.aside`
   grid-row: 2 / -1;
 `;
 
-function Sidebar() {
+function DashboardSidebar() {
   return (
     <StyledSidebar>
       <p>Sidebar</p>
@@ -17,4 +17,4 @@ function Sidebar() {
   );
 }
 
-export default Sidebar;
+export default DashboardSidebar;

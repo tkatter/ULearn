@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import { useUsers } from '../../contexts/userContext';
 
 const FullPage = styled.div`
   height: 100vh;
@@ -17,7 +16,6 @@ const FullPage = styled.div`
 
 function ProtectedRoute({ children }) {
   const queryClient = useQueryClient();
-  const { dispatch } = useUsers();
 
   // Load authenticated user
   const { error, user, isPending, isAuthenticated, isFetching } = useUser();
@@ -32,21 +30,10 @@ function ProtectedRoute({ children }) {
       if (!isAuthenticated && !isPending && !isFetching) {
         queryClient.clear();
         navigate('/login');
-      } else {
-        dispatch({ type: 'loggedIn', payload: user });
       }
     },
 
-    [
-      dispatch,
-      user,
-      error,
-      queryClient,
-      isAuthenticated,
-      navigate,
-      isPending,
-      isFetching,
-    ]
+    [error, queryClient, isAuthenticated, navigate, isPending, isFetching]
   );
 
   // While loading, show spinner

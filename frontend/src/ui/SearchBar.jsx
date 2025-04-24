@@ -5,6 +5,8 @@ const StyledSearch = styled.input`
   border-radius: 25px;
   box-shadow: var(--shadow-sm);
   padding: 0.8rem 1.2rem;
+  width: 50%;
+  justify-self: center;
 `;
 
 function SearchBar() {

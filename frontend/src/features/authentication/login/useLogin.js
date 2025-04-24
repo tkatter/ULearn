@@ -3,10 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 import { loginApi } from '../../../services/loginApi';
-// import { useUsers } from '../../../contexts/userContext';
+import { useUsers } from '../../../contexts/userContext';
 
 export function useLogin() {
-  // const { dispatch } = useUsers();
+  const { dispatch } = useUsers();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
@@ -21,7 +21,7 @@ export function useLogin() {
       localStorage.setItem('user', JSON.stringify(data.data.user));
 
       // Set data in UserContext state
-      // dispatch({ type: 'loggedIn', payload: data.data.user });
+      dispatch({ type: 'loggedIn', payload: data.data.user });
 
       // Add logged in user to React Query 'user' cache
       queryClient.setQueryData(['user'], data.data.user);

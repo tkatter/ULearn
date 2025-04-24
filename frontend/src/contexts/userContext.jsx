@@ -9,9 +9,7 @@ const initialState = {
   // User object from api fetch
   user: null,
   // Has valid (not expired) jwt cookie
-  isAuthorized: false,
-  // Is logged in
-  isLoggedIn: false,
+  isAuthenticated: false,
 };
 
 function reducer(state, { type, payload }) {
@@ -20,12 +18,13 @@ function reducer(state, { type, payload }) {
       return {
         ...state,
         user: payload,
-        isLoggedIn: true,
-        isAuthorized: true,
+        isAuthenticated: true,
       };
     case 'loggedOut':
       return {
-        initialState,
+        ...state,
+        user: null,
+        isAuthenticated: false,
       };
     default:
       throw new Error('Something went wrong in the UserContext reducer');
@@ -34,13 +33,13 @@ function reducer(state, { type, payload }) {
 
 // Context Provider (provides context to all children)
 function UserProvider({ children }) {
-  const [{ user, isAuthorized, isLoggedIn }, dispatch] = useReducer(
+  const [{ user, isAuthenticated }, dispatch] = useReducer(
     reducer,
     initialState
   );
 
   return (
-    <UserContext.Provider value={{ user, isAuthorized, isLoggedIn, dispatch }}>
+    <UserContext.Provider value={{ user, isAuthenticated, dispatch }}>
       {children}
     </UserContext.Provider>
   );

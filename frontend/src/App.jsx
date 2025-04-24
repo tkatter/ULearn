@@ -11,6 +11,7 @@ import AppLayout from './ui/AppLayout';
 import Account from './pages/Account';
 import { UserProvider } from './contexts/userContext';
 import ProtectedRoute from './features/authentication/ProtectedRoute';
+import DashboardLayout from './features/dashboard/DashboardLayout';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -28,17 +29,27 @@ function App() {
       <BrowserRouter>
         <UserProvider>
           <Routes>
+            <Route element={<AppLayout />}>
+              <Route index element={<Navigate replace to="home" />} />
+              <Route path="home" element={<Homepage />} />
+              <Route
+                path="account"
+                element={
+                  <ProtectedRoute>
+                    <Account />
+                  </ProtectedRoute>
+                }
+              />
+            </Route>
             <Route
               element={
                 <ProtectedRoute>
-                  <AppLayout />
+                  <DashboardLayout />
                 </ProtectedRoute>
               }
             >
-              <Route index element={<Navigate replace to="home" />} />
-              <Route path="home" element={<Homepage />} />
-              <Route path="dashboard" element={<Dashboard />} />
-              <Route path="account" element={<Account />} />
+              <Route index path="dashboard" element={<Dashboard />} />
+              <Route path="sets" element={<Account />} />
             </Route>
             <Route path="login" element={<Login />} />
           </Routes>

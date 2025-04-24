@@ -6,10 +6,10 @@ import {
   HiOutlineSquaresPlus,
   HiOutlineUserCircle,
 } from 'react-icons/hi2';
-import { useLogout } from '../features/authentication/logout/useLogout';
-import SpinnerMini from './SpinnerMini';
-import { useUsers } from '../contexts/userContext';
-import Button from './Button';
+import { useLogout } from '../../features/authentication/logout/useLogout';
+import SpinnerMini from '../../ui/SpinnerMini';
+import { useUsers } from '../../contexts/userContext';
+import Button from '../../ui/Button';
 
 const StyledMainNav = styled.nav``;
 
@@ -68,44 +68,20 @@ const StyledSpan = styled.span`
   text-transform: capitalize;
 `;
 
-function MainNav() {
-  const { isAuthenticated, user } = useUsers();
+function DashNav() {
+  const { user } = useUsers();
 
   return (
     <StyledMainNav>
       <NavList>
         <li>
-          <StyledNavLink to="/home">
-            <HiOutlineHome /> <span>About</span>
+          <StyledNavLink to="/account">
+            <HiOutlineUserCircle /> <StyledSpan>{user?.name}</StyledSpan>
           </StyledNavLink>
         </li>
-        {isAuthenticated && (
-          <>
-            <li>
-              <StyledNavLink to="/dashboard">
-                <HiOutlineSquaresPlus /> <span>Dashboard</span>
-              </StyledNavLink>
-            </li>
-            <li>
-              <StyledNavLink to="/account">
-                <HiOutlineUserCircle /> <StyledSpan>{user.name}</StyledSpan>
-              </StyledNavLink>
-            </li>
-          </>
-        )}
-        {isAuthenticated ? (
-          <li>
-            <LogoutButton />
-          </li>
-        ) : (
-          <li>
-            <StyledNavLink to="/login">
-              <Button $size="medium" $variation="primary">
-                Login
-              </Button>
-            </StyledNavLink>
-          </li>
-        )}
+        <li>
+          <LogoutButton />
+        </li>
       </NavList>
     </StyledMainNav>
   );
@@ -116,11 +92,11 @@ function LogoutButton() {
 
   return (
     <>
-      <button disabled={isPending} onClick={logout}>
+      <Button disabled={isPending} onClick={logout}>
         {!isPending ? <HiArrowRightOnRectangle /> : <SpinnerMini />}
-      </button>
+      </Button>
     </>
   );
 }
 
-export default MainNav;
+export default DashNav;

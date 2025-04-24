@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
-import MainNav from './MainNav';
-import CompanyTitle from './CompanyTitle';
-import SearchBar from './SearchBar';
+import CompanyTitle from '../../ui/CompanyTitle';
+import SearchBar from '../../ui/SearchBar';
+import DashNav from './DashNav';
 
 const StyledHeader = styled.header`
   background-color: var(--color-grey-0);
@@ -20,13 +20,13 @@ const StyledHeader = styled.header`
   justify-content: center;
 `;
 
-function Header() {
+function DashboardHeader() {
   return (
     <StyledHeader>
       <CompanyTitle />
       <SearchBar />
-      <MainNav />
+      <DashNav />
     </StyledHeader>
   );
 }
-export default Header;
+export default DashboardHeader;

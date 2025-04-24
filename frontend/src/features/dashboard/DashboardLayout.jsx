@@ -1,9 +1,8 @@
 import { Outlet } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { UserProvider } from '../contexts/userContext';
-import Header from './Header';
-import Sidebar from './Sidebar';
+import DashboardHeader from './DashboardHeader';
+import DashboardSidebar from './DashboardSidebar';
 
 const StyledAppLayout = styled.div`
   display: grid;
@@ -20,11 +19,11 @@ const Main = styled.main`
   grid-row: 2 / -1;
 `;
 
-function AppLayout() {
+function DashboardLayout() {
   return (
     <StyledAppLayout>
-      <Header />
-      <Sidebar />
+      <DashboardHeader />
+      <DashboardSidebar />
       <Main>
         <Outlet />
       </Main>
@@ -32,4 +31,4 @@ function AppLayout() {
   );
 }
 
-export default AppLayout;
+export default DashboardLayout;

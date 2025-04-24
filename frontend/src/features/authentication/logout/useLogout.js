@@ -17,7 +17,7 @@ export function useLogout() {
       localStorage.removeItem('session');
       queryClient.removeQueries(['user']);
       dispatch({ type: 'loggedOut' });
-      navigate('/login', { replace: true });
+      navigate('/home', { replace: true });
     },
     onError: error => {
       return toast.error(`${error.message}`);
