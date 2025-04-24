@@ -53,9 +53,9 @@ app.use(
 app.use('/api/v1/oauth', oauthRouter);
 app.use('/api/v1/auth', authRouter);
 
-// Protect the routes to logged in users below this middleware
 app.use('/api/v1/sets', setRouter);
 app.use('/api/v1/users', userRouter);
+// Protect the routes to logged in users below this middleware
 app.use(protect);
 app.use('/api/v1/notes', noteRouter);
 

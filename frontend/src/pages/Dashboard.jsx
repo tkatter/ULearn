@@ -11,9 +11,9 @@ function Dashboard() {
       </Row>
       <Whitespace height="3.2rem;" />
 
-      <Row $type="vertical">
+      {/* <Row $type="vertical">
         <SetsTable />
-      </Row>
+      </Row> */}
     </>
   );
 }

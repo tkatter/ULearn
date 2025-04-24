@@ -20,9 +20,9 @@ class SendResponse {
   send() {
     this.res.status(this.statusCode).json({
       status: this.status,
-      token: this.token,
-      results: this.results,
       message: this.message,
+      session: this.session,
+      results: this.results,
       data: this.data,
     });
   }

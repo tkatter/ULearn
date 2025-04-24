@@ -23,9 +23,7 @@ const signToken = (id, isVerified) => {
 const createSendToken = (res, statusCode, user, message) => {
   const token = signToken(user._id, user.isVerified);
   const cookieOptions = {
-    maxAge: new Date(
-      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 60 * 60 * 1000
-    ),
+    maxAge: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 60 * 60),
     secure: false,
     httpOnly: true,
   };
@@ -37,7 +35,14 @@ const createSendToken = (res, statusCode, user, message) => {
   user.password = undefined;
 
   const response = new SendResponse(res, statusCode, {
-    token,
+    session: {
+      token,
+      issuedAt: new Date(Date.now()),
+      expiresAt: new Date(
+        Date.now() +
+          Number([...process.env.JWT_EXPIRES_IN].at(0)) * 60 * 60 * 1000
+      ),
+    },
     message,
     data: { user },
   });
@@ -65,7 +70,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
   // Check if user exists
-  const currentUser = await User.findById(decoded.id).select('+role');
+  let currentUser = await User.findById(decoded.id).select('+role');
   if (!currentUser)
     return next(
       new AppError('The user belonging to this token no longer exists', 401)
@@ -78,8 +83,12 @@ exports.protect = catchAsync(async (req, res, next) => {
     );
   }
 
-  // Grant access to protected route
-  req.user = currentUser;
+  // Grant access to protected route and populate isAuthenticated field
+  const authenticatedUser = await User.findByIdAndUpdate(currentUser._id, {
+    isAuthenticated: true,
+  });
+
+  req.user = authenticatedUser;
   next();
 });
 
@@ -92,6 +101,23 @@ exports.restrictTo = (...roles) => {
     next();
   };
 };
+
+exports.isAuthenticated = catchAsync(async (req, res, next) => {
+  const id = req.params.usrId;
+  const authenticatedUser = await User.findById(id);
+
+  // Return error if no user is found
+  if (!authenticatedUser)
+    return next(new AppError('No user found with that Id', 400));
+
+  const response = new SendResponse(res, 200, {
+    message: 'User is authenticated!',
+    data: { authenticatedUser },
+  });
+  response.send();
+
+  // createSendToken(res, 200, authenticatedUser, 'User is authenticated!');
+});
 
 exports.oathRequest = async (req, res, next) => {
   try {
@@ -238,8 +264,12 @@ exports.login = catchAsync(async (req, res, next) => {
     return next(new AppError('Incorrect email or password', 401));
 
   // If everything is valid, send jwt to client
+  const authenticatedUser = await User.findByIdAndUpdate(user._id, {
+    isAuthenticated: true,
+  });
+
   const resMessage = 'User successfully logged in';
-  createSendToken(res, 200, user, resMessage);
+  createSendToken(res, 200, authenticatedUser, resMessage);
 });
 
 exports.forgotPassword = catchAsync(async (req, res, next) => {

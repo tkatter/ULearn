@@ -4,10 +4,11 @@ import isEmail from 'validator/lib/isEmail';
 
 import { useLogin } from './useLogin';
 
-import Button from '../../ui/Button';
-import Form from '../../ui/Form';
-import Input from '../../ui/Input';
-import FormRowVertical from '../../ui/FormRowVertical';
+import Button from '../../../ui/Button';
+import Form from '../../../ui/Form';
+import Input from '../../../ui/Input';
+import FormRowVertical from '../../../ui/FormRowVertical';
+import SpinnerMini from '../../../ui/SpinnerMini';
 
 // TODO: FIX STYLING
 
@@ -28,6 +29,7 @@ function LoginForm() {
     <Form onSubmit={handleSubmit(onSubmit, onError)}>
       <FormRowVertical label="Email address" error={formError?.email?.message}>
         <Input
+          value="thomas@ulearn.com"
           type="email"
           name="email"
           id="email"
@@ -42,6 +44,7 @@ function LoginForm() {
       </FormRowVertical>
       <FormRowVertical label="Password" error={formError?.password?.message}>
         <Input
+          value="password"
           type="password"
           name="password"
           id="password"
@@ -49,8 +52,13 @@ function LoginForm() {
           {...register('password', { required: 'Password is required' })}
         />
       </FormRowVertical>
-      <Button disabled={isPending} type="submit">
-        Log in
+      <Button
+        disabled={isPending}
+        type="submit"
+        $variation="primary"
+        $size="large"
+      >
+        {!isPending ? 'Log in' : <SpinnerMini />}
       </Button>
     </Form>
   );

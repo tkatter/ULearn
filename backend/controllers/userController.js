@@ -33,7 +33,9 @@ exports.getUser = catchAsync(async (req, res, next) => {
   // Return error if no user is found
   if (!user) return next(new AppError('No user found with that Id', 400));
 
-  const response = new SendResponse(res, 200, { data: { user } });
+  const response = new SendResponse(res, 200, {
+    data: { user },
+  });
   response.send();
 });
 

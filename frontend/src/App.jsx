@@ -10,6 +10,7 @@ import Login from './pages/Login';
 import AppLayout from './ui/AppLayout';
 import Account from './pages/Account';
 import { UserProvider } from './contexts/userContext';
+import ProtectedRoute from './features/authentication/ProtectedRoute';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -27,7 +28,13 @@ function App() {
       <BrowserRouter>
         <UserProvider>
           <Routes>
-            <Route element={<AppLayout />}>
+            <Route
+              element={
+                <ProtectedRoute>
+                  <AppLayout />
+                </ProtectedRoute>
+              }
+            >
               <Route index element={<Navigate replace to="homepage" />} />
               <Route path="homepage" element={<Homepage />} />
               <Route path="dashboard" element={<Dashboard />} />

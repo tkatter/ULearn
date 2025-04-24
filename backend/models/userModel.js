@@ -44,6 +44,10 @@ const userSchema = new mongoose.Schema(
       default: 'user',
       select: false,
     },
+    isAuthenticated: {
+      type: Boolean,
+      default: false,
+    },
     active: {
       type: Boolean,
       default: true,

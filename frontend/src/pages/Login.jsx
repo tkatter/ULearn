@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import CompanyTitle from '../ui/CompanyTitle';
 import Heading from '../ui/Heading';
-import LoginForm from '../features/login/LoginForm';
+import LoginForm from '../features/authentication/login/LoginForm';
 
 const LoginLayout = styled.div`
   background-color: #0ca678;
