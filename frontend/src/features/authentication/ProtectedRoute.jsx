@@ -3,6 +3,9 @@ import Spinner from '../../ui/Spinner';
 import { useUser } from './useUser';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import toast from 'react-hot-toast';
+import { useUsers } from '../../contexts/userContext';
 
 const FullPage = styled.div`
   height: 100vh;
@@ -13,21 +16,37 @@ const FullPage = styled.div`
 `;
 
 function ProtectedRoute({ children }) {
+  const queryClient = useQueryClient();
+  const { dispatch } = useUsers();
+
   // Load authenticated user
-  const { user, isPending, isAuthenticated } = useUser();
+  const { error, user, isPending, isAuthenticated, isFetching } = useUser();
 
   const navigate = useNavigate();
 
   // If there is NO authenticated user, redirect to /login
   useEffect(
     function () {
-      if (!isAuthenticated && !isPending) {
+      if (error) toast.error(error.message);
+
+      if (!isAuthenticated && !isPending && !isFetching) {
+        queryClient.clear();
         navigate('/login');
       } else {
-        localStorage.setItem('user', JSON.stringify(user));
+        dispatch({ type: 'loggedIn', payload: user });
       }
     },
-    [user, isAuthenticated, navigate, isPending]
+
+    [
+      dispatch,
+      user,
+      error,
+      queryClient,
+      isAuthenticated,
+      navigate,
+      isPending,
+      isFetching,
+    ]
   );
 
   // While loading, show spinner

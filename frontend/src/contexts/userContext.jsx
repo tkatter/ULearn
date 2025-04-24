@@ -23,6 +23,10 @@ function reducer(state, { type, payload }) {
         isLoggedIn: true,
         isAuthorized: true,
       };
+    case 'loggedOut':
+      return {
+        initialState,
+      };
     default:
       throw new Error('Something went wrong in the UserContext reducer');
   }

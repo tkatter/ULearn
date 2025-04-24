@@ -25,6 +25,7 @@ export function useLogin() {
 
       // Add logged in user to React Query 'user' cache
       queryClient.setQueryData(['user'], data.data.user);
+
       // On success, redirect user to dashboard page
       navigate('/dashboard', { replace: true });
     },

@@ -1,6 +1,7 @@
 export async function getCurrentUserApi() {
   const session = localStorage.getItem('session');
-  if (!session) return null;
+  const user = localStorage.getItem('user');
+  if (!session || !user) return null;
 
   const userId = JSON.parse(localStorage.getItem('user'))._id;
   const token = JSON.parse(localStorage.getItem('session')).token;
@@ -13,14 +14,15 @@ export async function getCurrentUserApi() {
       },
     });
 
-    // Throw error for 500 status code
-    if (res?.status === 500)
-      throw new Error('Something went wrong, please try again later');
-
     const data = await res.json();
 
+    // Throw error for expired JWT
+    if (data.status === 'error' && data?.error?.name === 'TokenExpiredError') {
+      throw 'Your session has expired, please login again.';
+    }
+
     // Manually throwing error for bad requests for React Query
-    if (data.status === 'fail') {
+    if (data.status !== 'success') {
       throw new Error(data.message);
     } else if (data.status === 'success') {
       // return data;
@@ -31,9 +33,3 @@ export async function getCurrentUserApi() {
     throw new Error(err);
   }
 }
-
-// rewrite function as follows
-// 1. Retrieve current local session (localStoratge)
-// 2. If no local session return null
-// 3. If there is a current local session, fetch the user using the code written above^
-// 4. if (error) throw new Error(error.message)

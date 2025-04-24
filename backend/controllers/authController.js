@@ -23,6 +23,7 @@ const signToken = (id, isVerified) => {
 const createSendToken = (res, statusCode, user, message) => {
   const token = signToken(user._id, user.isVerified);
   const cookieOptions = {
+    // maxAge: process.env.JWT_COOKIE_EXPIRES_IN * 60 * 60 * 1000,
     maxAge: process.env.JWT_COOKIE_EXPIRES_IN * 60 * 60 * 1000,
     secure: false,
     httpOnly: true,
@@ -264,9 +265,11 @@ exports.login = catchAsync(async (req, res, next) => {
     return next(new AppError('Incorrect email or password', 401));
 
   // If everything is valid, send jwt to client
-  const authenticatedUser = await User.findByIdAndUpdate(user._id, {
+  await User.findByIdAndUpdate(user._id, {
     isAuthenticated: true,
   });
+
+  const authenticatedUser = await User.findById(user._id);
 
   const resMessage = 'User successfully logged in';
   createSendToken(res, 200, authenticatedUser, resMessage);
