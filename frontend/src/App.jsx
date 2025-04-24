@@ -35,8 +35,8 @@ function App() {
                 </ProtectedRoute>
               }
             >
-              <Route index element={<Navigate replace to="homepage" />} />
-              <Route path="homepage" element={<Homepage />} />
+              <Route index element={<Navigate replace to="home" />} />
+              <Route path="home" element={<Homepage />} />
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="account" element={<Account />} />
             </Route>

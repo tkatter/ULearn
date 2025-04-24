@@ -23,7 +23,7 @@ const signToken = (id, isVerified) => {
 const createSendToken = (res, statusCode, user, message) => {
   const token = signToken(user._id, user.isVerified);
   const cookieOptions = {
-    maxAge: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 60 * 60),
+    maxAge: process.env.JWT_COOKIE_EXPIRES_IN * 60 * 60 * 1000,
     secure: false,
     httpOnly: true,
   };
@@ -270,6 +270,18 @@ exports.login = catchAsync(async (req, res, next) => {
 
   const resMessage = 'User successfully logged in';
   createSendToken(res, 200, authenticatedUser, resMessage);
+});
+
+exports.logout = catchAsync(async (req, res, next) => {
+  const id = req.params.usrId;
+  await User.findByIdAndUpdate(id, { isAuthenticated: false });
+
+  res.cookie('jwt', 'loggedout', {
+    maxAge: 10 * 1000,
+  });
+
+  const response = new SendResponse(res, 200);
+  response.send();
 });
 
 exports.forgotPassword = catchAsync(async (req, res, next) => {

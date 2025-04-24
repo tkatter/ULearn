@@ -1,10 +1,13 @@
 import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 import {
+  HiArrowRightOnRectangle,
   HiOutlineHome,
   HiOutlineSquaresPlus,
   HiOutlineUserCircle,
 } from 'react-icons/hi2';
+import { useLogout } from '../features/authentication/logout/useLogout';
+import SpinnerMini from './SpinnerMini';
 
 const StyledMainNav = styled.nav``;
 
@@ -58,7 +61,7 @@ function MainNav() {
     <StyledMainNav>
       <NavList>
         <li>
-          <StyledNavLink to="/homepage">
+          <StyledNavLink to="/home">
             <HiOutlineHome /> <span>Home</span>
           </StyledNavLink>
         </li>
@@ -72,8 +75,23 @@ function MainNav() {
             <HiOutlineUserCircle /> <span>Account</span>
           </StyledNavLink>
         </li>
+        <li>
+          <LogoutButton />
+        </li>
       </NavList>
     </StyledMainNav>
+  );
+}
+
+function LogoutButton() {
+  const { logout, isPending } = useLogout();
+
+  return (
+    <>
+      <button disabled={isPending} onClick={logout}>
+        {!isPending ? <HiArrowRightOnRectangle /> : <SpinnerMini />}
+      </button>
+    </>
   );
 }
 
