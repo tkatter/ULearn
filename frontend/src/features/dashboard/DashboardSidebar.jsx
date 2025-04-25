@@ -1,4 +1,6 @@
 import styled from 'styled-components';
+import Menus from '../../ui/Menus';
+import Heading from '../../ui/Heading';
 
 const StyledSidebar = styled.aside`
   background-color: var(--color-grey-400);
@@ -12,7 +14,7 @@ const StyledSidebar = styled.aside`
 function DashboardSidebar() {
   return (
     <StyledSidebar>
-      <p>Sidebar</p>
+      <Heading as="h2">Sidebar</Heading>
     </StyledSidebar>
   );
 }

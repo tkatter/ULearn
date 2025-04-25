@@ -14,6 +14,10 @@ const alignment = {
   jusEnd: css`
     justify-content: flex-end;
   `,
+  centeredGap: css`
+    align-items: center;
+    gap: 1rem;
+  `,
 };
 
 const Row = styled.div`

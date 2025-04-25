@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
+// import { useUsers } from '../../contexts/userContext';
 
 const FullPage = styled.div`
   height: 100vh;
@@ -15,10 +16,11 @@ const FullPage = styled.div`
 `;
 
 function ProtectedRoute({ children }) {
+  // const { dispatch } = useUsers();
   const queryClient = useQueryClient();
 
   // Load authenticated user
-  const { error, user, isPending, isAuthenticated, isFetching } = useUser();
+  const { error, isPending, isAuthenticated, isFetching } = useUser();
 
   const navigate = useNavigate();
 

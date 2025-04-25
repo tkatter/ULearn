@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import DashboardHeader from './DashboardHeader';
 import DashboardSidebar from './DashboardSidebar';
+import Menus from '../../ui/Menus';
 
 const StyledAppLayout = styled.div`
   display: grid;
@@ -22,11 +23,13 @@ const Main = styled.main`
 function DashboardLayout() {
   return (
     <StyledAppLayout>
-      <DashboardHeader />
-      <DashboardSidebar />
-      <Main>
-        <Outlet />
-      </Main>
+      <Menus>
+        <DashboardHeader />
+        <DashboardSidebar />
+        <Main>
+          <Outlet />
+        </Main>
+      </Menus>
     </StyledAppLayout>
   );
 }

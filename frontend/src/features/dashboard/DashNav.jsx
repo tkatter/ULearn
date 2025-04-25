@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 import {
   HiArrowRightOnRectangle,
@@ -10,6 +10,8 @@ import { useLogout } from '../../features/authentication/logout/useLogout';
 import SpinnerMini from '../../ui/SpinnerMini';
 import { useUsers } from '../../contexts/userContext';
 import Button from '../../ui/Button';
+import { useEffect } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 
 const StyledMainNav = styled.nav``;
 
@@ -69,7 +71,19 @@ const StyledSpan = styled.span`
 `;
 
 function DashNav() {
-  const { user } = useUsers();
+  const { user, dispatch } = useUsers();
+  const queryClient = useQueryClient();
+
+  // effect to repopulate UserContext API state upon a reload
+  useEffect(
+    function () {
+      dispatch({
+        type: 'loggedIn',
+        payload: queryClient.getQueryData(['user']),
+      });
+    },
+    [queryClient, dispatch]
+  );
 
   return (
     <StyledMainNav>
