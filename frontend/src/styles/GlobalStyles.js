@@ -3,14 +3,16 @@ import { createGlobalStyle } from 'styled-components';
 const GlobalStyle = createGlobalStyle`
 :root {
   /* Indigo */
-  --color-brand-50: #eef2ff;
-  --color-brand-100: #e0e7ff;
-  --color-brand-200: #c7d2fe;
-  --color-brand-500: #6366f1;
-  --color-brand-600: #4f46e5;
-  --color-brand-700: #4338ca;
-  --color-brand-800: #3730a3;
-  --color-brand-900: #312e81;
+  --color-primary-50: ##e1f4ee;
+  --color-primary-100: ##b5e5d4;
+  --color-primary-200: ##86d4b9;
+  --color-primary-300: ##55c39e;
+  --color-primary-400: ##2fb48a;
+  --color-primary-500: ##0ca678;
+  --color-primary-600: ##08986c;
+  --color-primary-700: ##01885c;
+  --color-primary-800: ##00784f;
+  --color-primary-900: ##005b33;
 
   /* Grey */
   --color-grey-0: #fff;
